@@ -5,15 +5,16 @@
         static Person[] contactList = new Person[100];
         class Person
         {
-            public string persname, surname, phone, address, birthdate;
+            public string persname, surname, birthdate;
+            public string[] phone = new string[100];
+            public string[] address = new string[100];
+            
         }
-
         static string[] Input(string s)
         {
             Console.Write(s);
             return Console.ReadLine().Split(' ');
         }
-
         static void Help()
         {
             Console.WriteLine("Avaliable commands: ");
@@ -26,23 +27,33 @@
             Console.WriteLine("  save /file/ - save contact list data to the file");
             Console.WriteLine();
         }
-
         private static void ReadMethod(string lastFileName)
         {
+
             using (StreamReader infile = new StreamReader(lastFileName))
             {
                 string line;
                 while ((line = infile.ReadLine()) != null)
                 {
                     Console.WriteLine(line);
-                    string[] attrs = line.Split('|');
+                    string[] attrs = line.Split('|'); //name | surname | p1, p2.. pn | adr1, adr2... adrn |
                     Person p = new Person();
                     p.persname = attrs[0];
                     p.surname = attrs[1];
                     string[] phones = attrs[2].Split(';');
-                    p.phone = phones[0];
+                    for (int i = 0; i < phones.Length; i++)
+                    {
+                        p.phone[i] = phones[i];
+                        //Console.WriteLine(p.phone[i]);
+                    }
+                    //p.phone = phones[0];
                     string[] addresses = attrs[3].Split(';');
-                    p.address = addresses[0];
+                    for (int i = 0; i < addresses.Length; i++)
+                    {
+                        p.address[i] = addresses[i];
+                        //Console.WriteLine(p.address[i]);
+                    }
+                    //p.address = addresses[0];
                     for (int ix = 0; ix < contactList.Length; ix++)
                     {
                         if (contactList[ix] == null)
@@ -54,7 +65,6 @@
                 }
             }
         }
-
         public static void Main(string[] args)
         {
             string lastFileName = "address.lis";
@@ -128,7 +138,5 @@
                 }
             } while (commandLine[0] != "quit");
         }
-
-
     }
 }
