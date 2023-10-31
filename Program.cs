@@ -2,13 +2,31 @@
 {
     class MainClass
     {
-        static Person[] contactList = new Person[100];
+        //static Person[] contactList = new Person[100];
+        static List<Person> contactList = new List<Person>();
         class Person
         {
             public string persname, surname, birthdate;
             public string[] phone = new string[100];
             public string[] address = new string[100];
             
+            public void PrintInfo()
+            {
+                Console.Write($"Name: {this.persname} {this.surname}, Phone number(s): ");
+                for(int i = 0; i < this.phone.Length; i++)
+                {
+                    if (this.phone[i] != null)
+                        Console.Write(this.phone[i] + ", ");
+                }
+                Console.Write("Address(es): ");
+                for(int i = 0; i < this.address.Length; i++)
+                {
+                    if (this.address[i] != null)
+                        Console.Write(this.address[i] + ", ");
+                }
+                Console.Write($"Birthdate: {this.birthdate} \n");
+            }
+
         }
         static string[] Input(string s)
         {
@@ -35,7 +53,6 @@
                 string line;
                 while ((line = infile.ReadLine()) != null)
                 {
-                    Console.WriteLine(line);
                     string[] attrs = line.Split('|'); //name | surname | p1, p2.. pn | adr1, adr2... adrn |
                     Person p = new Person();
                     p.persname = attrs[0];
@@ -44,26 +61,38 @@
                     for (int i = 0; i < phones.Length; i++)
                     {
                         p.phone[i] = phones[i];
-                        //Console.WriteLine(p.phone[i]);
                     }
-                    //p.phone = phones[0];
                     string[] addresses = attrs[3].Split(';');
                     for (int i = 0; i < addresses.Length; i++)
                     {
                         p.address[i] = addresses[i];
-                        //Console.WriteLine(p.address[i]);
                     }
-                    //p.address = addresses[0];
-                    for (int ix = 0; ix < contactList.Length; ix++)
-                    {
-                        if (contactList[ix] == null)
-                        {
-                            contactList[ix] = p;
-                            break;
-                        }
-                    }
+                    contactList.Add(p);
                 }
             }
+        }
+        private static void NewPerson(List<string> tempName)
+        {
+            Person p = new Person();
+            if (tempName.Count == 0)
+            {
+                Console.Write("personal name: ");
+                p.persname = Console.ReadLine();
+                Console.Write("surname: ");
+                p.surname = Console.ReadLine();
+            }
+            else
+            {
+                p.persname = tempName[0];
+                p.surname = tempName[1];
+            }
+            Console.Write("phone: ");
+            p.phone = Console.ReadLine().Split(';');
+            Console.Write("address: ");
+            p.address = Console.ReadLine().Split(';');
+            Console.Write("birthdate: ");
+            p.birthdate = Console.ReadLine();
+            contactList.Add(p);
         }
         public static void Main(string[] args)
         {
@@ -92,6 +121,13 @@
                         ReadMethod(lastFileName);
                     }
                 }
+                else if (commandLine[0] ==  "list")
+                {
+                    foreach(Person p in contactList)
+                    {
+                        p.PrintInfo();
+                    }
+                }
                 else if (commandLine[0] == "save")
                 {
                     if (commandLine.Length < 2)
@@ -113,20 +149,14 @@
                 }
                 else if (commandLine[0] == "new")
                 {
-                    if (commandLine.Length < 2)
+                    List<string> tempName = new List<string>();
+                    if (commandLine.Length > 2)
                     {
-                        Console.Write("personal name: ");
-                        string persname = Console.ReadLine();
-                        Console.Write("surname: ");
-                        string surname = Console.ReadLine();
-                        Console.Write("phone: ");
-                        string phone = Console.ReadLine();
+                        tempName.Add(commandLine[1]);
+                        tempName.Add(commandLine[2]);
                     }
-                    else
-                    {
-                        // NYI!
-                        Console.WriteLine("Not yet implemented: new /person/");
-                    }
+                    NewPerson(tempName);
+
                 }
                 else if (commandLine[0] == "help")
                 {
